@@ -43,8 +43,6 @@ if (isset($_GET['id'])) {
                 echo "Error mengambil detail transaksi: " . $conn->error;
                 exit;
             }
-
-            // Menampilkan struk
             echo "<h1>Struk Transaksi</h1>";
             echo "<p><strong>No. Transaksi:</strong> " . $transaksi['id'] . "</p>";
             echo "<p><strong>Barang:</strong> " . $transaksi['nama_barang'] . "</p>";
@@ -52,11 +50,7 @@ if (isset($_GET['id'])) {
             echo "<p><strong>Jumlah:</strong> " . $transaksi['jumlah'] . "</p>";
             echo "<p><strong>Total:</strong> Rp " . number_format($transaksi['total'], 2) . "</p>";
             echo "<p><strong>Tanggal:</strong> " . $transaksi['tanggal'] . "</p>";
-            
-            // Tombol untuk mencetak struk
             echo "<button onclick='window.print()'>Cetak Struk</button><br><br>";
-
-            // Tombol untuk kembali ke halaman transaksi atau daftar barang
             echo "<a href='index.php'>Kembali ke Daftar Barang</a>";
             echo "<br>";
             echo "<a href='tambah_transaksi.php?id=$id_barang'>Kembali ke Transaksi</a>";
