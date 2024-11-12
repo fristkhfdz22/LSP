@@ -1,48 +1,33 @@
 <?php
 session_start();
 include 'config.php';
-
 if (!isset($_SESSION['username'])) {
     header("Location: login.php");
     exit;
 }
-
 if (isset($_GET['id'])) {
     $id_barang = $_GET['id'];
-
-    // Dapatkan data barang yang dipilih
     $sql_barang = "SELECT * FROM barang WHERE id = $id_barang";
     $result_barang = $conn->query($sql_barang);
     $barang = $result_barang->fetch_assoc();
-
     if (!$barang) {
         echo "Barang tidak ditemukan!";
         exit;
     }
-
-    // Jika form disubmit
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $jumlah = $_POST['jumlah'];
         $total = $barang['harga'] * $jumlah;
-
-        // Cek apakah stok cukup
         if ($jumlah > $barang['stok']) {
             echo "Stok tidak mencukupi!";
             exit;
         }
 
-        // Masukkan transaksi ke tabel transaksi
         $sql_transaksi = "INSERT INTO transaksi (id_barang, jumlah, total, tanggal) VALUES ('$id_barang', '$jumlah', '$total', NOW())";
         if ($conn->query($sql_transaksi) === TRUE) {
-            // Ambil ID transaksi yang baru saja dimasukkan
             $id_transaksi = $conn->insert_id;
-
-            // Kurangi stok barang
             $stok_baru = $barang['stok'] - $jumlah;
             $sql_update_stok = "UPDATE barang SET stok = $stok_baru WHERE id = $id_barang";
             $conn->query($sql_update_stok);
-
-            // Ambil data transaksi yang baru saja dimasukkan
             $sql_transaksi_detail = "SELECT t.id, t.jumlah, t.total, t.tanggal, b.nama_barang, b.harga 
                                      FROM transaksi t 
                                      JOIN barang b ON t.id_barang = b.id 
